@@ -1,0 +1,25 @@
+create a folder menstak_auth 
+ inside that create two folder api and client
+
+ inside the api folder we are installing node 
+ open api folder in terminal het the commmand npm init -y
+ npm install express
+ npm install mongoose
+ npm install nodemon 
+ npm install dotenv
+
+ after that create index.js file inside api folder 
+ inside package.json put "start": "nodemon index.js"
+
+and run the commmand in terminal npm run start 
+
+createing .env file in api folder for storing url,to store the envrolment veriables
+
+folder stucture -
+
+index.js file --> all roting url[app.use("/api/login")], all logic
+route folder  --> routing endpoints
+modeles folder --> all moderls like login, register, User
+utils folder  ---> utileti function some reusable function which is repetative 
+
+codeium
