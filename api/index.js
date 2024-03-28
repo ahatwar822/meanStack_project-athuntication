@@ -1,9 +1,17 @@
 import express from "express";
 import mongoose from "mongoose";
+import roleRoute from "./routes/role.js";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 
+app.use (express.json());
+
+app.use('/api/role', roleRoute);
+
+// app.use('/', (req,res) => {
+//     return res.send ("<h1> Welcome to the meanStak </h1>")
+// });
 
 
 // DB connection 
@@ -15,19 +23,7 @@ const connectMongoDB = async () => {
         console.log(error);
     }
 }
-
-
-// app.use('/api/login', (req,res) => {
-//     return res.send ("<h1> Login successfuly </h1>")
-// });
-
-// app.use('/api/register', (req,res) => {
-//     return res.send ("<h1> Register successfuly </h1>")
-// })
-
-app.use('/', (req,res) => {
-    return res.send ("<h1> Welcome to the meanStak </h1>")
-})
+connectMongoDB();
 
 app.listen (3000, () => {
     console.log("server is running on port 3000");
