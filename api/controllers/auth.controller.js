@@ -17,7 +17,7 @@ export const register = async (req, res, next) => {
         userName : req.body.userName,
         email : req.body.email,
         password : hash,
-        role: role
+        roles: role
     });
     await newUser.save();
     return next(CreateSuccess(200, "User created successfully", newUser));
@@ -36,10 +36,10 @@ export const registerAdmin = async (req, res, next) => {
         email : req.body.email,
         password : hash,
         isAdmin : true,
-        role: role
+        roles: role
     });
     await newUser.save();
-    return next(CreateSuccess(200, "User created successfully", newUser));
+    return next(CreateSuccess(200, "Admin created successfully", newUser));
 }
 export const login = async (req, res, next) => {  
     try{
