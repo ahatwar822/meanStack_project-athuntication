@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import Jwt from "jsonwebtoken";
 import { CreateSuccess } from "../utils/success.js";
+import UserToken from "../models/UserToken.js";
 
 
 export const register = async (req, res, next) => {
@@ -70,4 +71,61 @@ export const login = async (req, res, next) => {
         return res.status(500).send("something went wrong");
     }
 }
+
+export const sendEmail = async (req, res, next) => {
+    const email = req.body.email;
+    const user = await User.findOne({email: {$regex: '^' + email, $options: 'i'}});
+    if (!user) {
+        return next (CreateError(404, "User not found"))
+    }
+    const payload = {
+        email: user.email
+    }
+    const expiryTime = 300;
+    const token = Jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: expiryTime});
+
+    const newToken = new UserToken({
+        _userId: user._id,
+        token: token
+    });
+    
+    const mailTransporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: "himanshugaupale875@gmail.com",
+            pass: "awts nini knjx dltq"
+        }
+    });
+
+    let mailDetails = {
+        from: "himansshugaupale875@gmail.com",
+        to: user.email,
+        subject: "Reset Password",
+        html:`
+        <html>
+            <head>
+                <title>Reset Password</title>
+            </head>
+            <body>
+                <h1>Reset Password Request</h1>
+                <p>Dear ${user.firstName},</p>
+                <p>Please click the following link to reset your password:</p>
+                <a href = $(process.env.LIVE_URL)/reset/${token} > <button style ="background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100% border-radius = 4px" >Reset Password</button></a>
+                <p> Please note that This link is only vlid for a 5 minutes. If ypou did not request a, plase disregard this massage.</p>
+                <p>Thank you,</p>
+                <p>Let's Program Team</p>
+            </body>
+        </html>`,
+    };
+
+    mailTransporter.sendMail(mailDetails, async (err, data) => {
+        if (err) {
+            console.log(err);
+            return next (CreateError(500, "sonething went wrong while sending email"))
+        }else{
+            await newToken.save();
+            return next (CreateSuccess(200, "Email sent successfully"))
+        }
+    })
+    };
 
