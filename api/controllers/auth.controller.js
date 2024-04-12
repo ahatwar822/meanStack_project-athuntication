@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import Jwt from "jsonwebtoken";
 import { CreateSuccess } from "../utils/success.js";
 import UserToken from "../models/UserToken.js";
-
+import nodemailer from "nodemailer";
 
 export const register = async (req, res, next) => {
     
@@ -93,13 +93,13 @@ export const sendEmail = async (req, res, next) => {
         service: 'gmail',
         auth: {
             user: "himanshugaupale875@gmail.com",
-            pass: "awts nini knjx dltq"
+            pass: "mhyj ostt xljc jhvm"
         }
     });
 
     let mailDetails = {
-        from: "himansshugaupale875@gmail.com",
-        to: user.email,
+        from: "himanshugaupale875@gmail.com",
+        to: email,
         subject: "Reset Password",
         html:`
         <html>
@@ -110,7 +110,7 @@ export const sendEmail = async (req, res, next) => {
                 <h1>Reset Password Request</h1>
                 <p>Dear ${user.firstName},</p>
                 <p>Please click the following link to reset your password:</p>
-                <a href = $(process.env.LIVE_URL)/reset/${token} > <button style ="background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100% border-radius = 4px" >Reset Password</button></a>
+                <a href = ${process.env.LIVE_URL}/reset/${token} > <button style ="background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100% border-radius = 4px" >Reset Password</button></a>
                 <p> Please note that This link is only vlid for a 5 minutes. If ypou did not request a, plase disregard this massage.</p>
                 <p>Thank you,</p>
                 <p>Let's Program Team</p>
@@ -129,3 +129,29 @@ export const sendEmail = async (req, res, next) => {
     })
     };
 
+    export const resetPassword = async (req, res, next) => {
+        const token = req.params.token;
+        const newPassword = req.body.password;
+
+        Jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
+            if (err) {
+                return next (CreateError(500, "Reset Link is Expired."))
+            }else{
+                const response = data;
+                const user = await User.findOne({email: {$regex: '^' + response.email, $options: 'i'}});
+                const salt = await bcrypt.genSalt(10);
+                const hash = await bcrypt.hash(newPassword, salt);
+                user.password = hash;
+                try {
+                    const updatedUser = await user.findOneAndUpdate(
+                        {_id: user._id},
+                        {$set: user},
+                        {new: true}
+                    )
+                    return next (CreateSuccess(200, "Password reset successfully"))
+                } catch (error) {
+                    return next (CreateError(500, "something went wrong"))
+                }
+            }
+        })
+    }

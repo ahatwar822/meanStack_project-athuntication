@@ -9,11 +9,20 @@ export class AuthService {
   http = inject(HttpClient);
 
   registerService(registerObj: any){
-    return this.http.post<any>(`${apiUrls.authServiceApi}register`, registerObj) 
+    return this.http.post<any>(`${apiUrls.authServiceApi}register`, registerObj);
     //<any>(`${apiUrls.authServiceApi}login`)</any>
   }
 
   loginService(loginObj: any){
-    return this.http.post<any>(`${apiUrls.authServiceApi}login`, loginObj)
+    return this.http.post<any>(`${apiUrls.authServiceApi}login`, loginObj);
   }
+
+  sendEmailService(email:string){
+    return this.http.post<any>(`${apiUrls.authServiceApi}sendEmail`, {email:email});
+  }
+
+  resetPasswordService(resetObj:any){
+    return this.http.post<any>(`${apiUrls.authServiceApi}resetPassword`, resetObj);
+  }
+
 }

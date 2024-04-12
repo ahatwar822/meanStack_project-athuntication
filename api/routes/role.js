@@ -18,4 +18,6 @@ router.get ('/getAll', rolls);
 // delete role from DB
 router.delete ('/delete/:id', deleteRole);
 
+
+
 export default router;
