@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from 'express';
 import { confirmPasswordValidator } from '../../validators/confirm-password.validator';
 import { AuthService } from '../../services/auth.service';
@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-reset',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './reset.component.html',
   styleUrl: './reset.component.scss'
 })
@@ -56,5 +56,4 @@ export default class ResetComponent implements OnInit {
       }
     })
    }
-
 }
